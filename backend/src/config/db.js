@@ -3,11 +3,23 @@ require('dotenv').config();
 
 let sequelize;
 
-if (process.env.DB_DIALECT === 'sqlite') {
+if (process.env.DATABASE_URL) {
+  // Support connecting via database URL string (standard for Render Postgres/MySQL, Railway, etc.)
+  sequelize = new Sequelize(process.env.DATABASE_URL, {
+    dialect: process.env.DB_DIALECT || 'postgres',
+    logging: false,
+    dialectOptions: {
+      ssl: process.env.DB_SSL === 'true' ? {
+        require: true,
+        rejectUnauthorized: false
+      } : false
+    }
+  });
+} else if (process.env.DB_DIALECT === 'sqlite') {
   sequelize = new Sequelize({
     dialect: 'sqlite',
     storage: process.env.DB_STORAGE || 'database.sqlite',
-    logging: false // Toggle to console.log to see SQL queries during debugging
+    logging: false
   });
 } else {
   sequelize = new Sequelize(
