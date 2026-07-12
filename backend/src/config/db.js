@@ -27,7 +27,7 @@ if (process.env.DATABASE_URL) {
     process.env.DB_USER,
     process.env.DB_PASS,
     {
-      host: process.env.DB_HOST || 'localhost',
+      host: process.env.DB_HOST || '127.0.0.1',
       port: process.env.DB_PORT || 3306,
       dialect: process.env.DB_DIALECT || 'mysql',
       logging: false,
