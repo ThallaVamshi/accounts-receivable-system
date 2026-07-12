@@ -1,25 +1,24 @@
-const { Sequelize } = require('sequelize');
-require('dotenv').config();
+const { Sequelize } = require("sequelize");
+require("dotenv").config();
 
 let sequelize;
 
 if (process.env.DATABASE_URL) {
-  // Support connecting via database URL string (standard for Render Postgres/MySQL, Railway, etc.)
   sequelize = new Sequelize(process.env.DATABASE_URL, {
-    dialect: process.env.DB_DIALECT || 'postgres',
+    dialect: "postgres",
     logging: false,
     dialectOptions: {
-      ssl: process.env.DB_SSL === 'true' ? {
+      ssl: {
         require: true,
-        rejectUnauthorized: false
-      } : false
-    }
+        rejectUnauthorized: false,
+      },
+    },
   });
-} else if (process.env.DB_DIALECT === 'sqlite') {
+} else if (process.env.DB_DIALECT === "sqlite") {
   sequelize = new Sequelize({
-    dialect: 'sqlite',
-    storage: process.env.DB_STORAGE || 'database.sqlite',
-    logging: false
+    dialect: "sqlite",
+    storage: process.env.DB_STORAGE || "database.sqlite",
+    logging: false,
   });
 } else {
   sequelize = new Sequelize(
@@ -27,16 +26,19 @@ if (process.env.DATABASE_URL) {
     process.env.DB_USER,
     process.env.DB_PASS,
     {
-      host: process.env.DB_HOST || '127.0.0.1',
-      port: process.env.DB_PORT || 3306,
-      dialect: process.env.DB_DIALECT || 'mysql',
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
+      dialect: process.env.DB_DIALECT,
       logging: false,
-      pool: {
-        max: 5,
-        min: 0,
-        acquire: 30000,
-        idle: 10000
-      }
+      dialectOptions:
+        process.env.DB_DIALECT === "postgres"
+          ? {
+              ssl: {
+                require: true,
+                rejectUnauthorized: false,
+              },
+            }
+          : {},
     }
   );
 }
