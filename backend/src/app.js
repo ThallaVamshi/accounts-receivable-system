@@ -12,6 +12,11 @@ const reportsRoutes = require('./routes/reports');
 const app = express();
 
 // Middlewares
+app.use((req, res, next) => {
+  console.log(`[REQUEST] ${req.method} ${req.url} - ${new Date().toISOString()}`);
+  next();
+});
+
 app.use(cors({
   origin: '*', // In production, replace with specific frontend domains
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
